@@ -1,86 +1,125 @@
 import cv2
-import cvzone
-from cvzone.PoseModule import PoseDetector
 import os
+from cvzone.PoseModule import PoseDetector
+import cvzone
 
-cap = cv2.VideoCapture(0)
-detector = PoseDetector()
+# Initialize Camera and Pose Detector
+def initialize_camera():
+    cap = cv2.VideoCapture(0)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+    detector = PoseDetector()
+    return cap, detector
 
-# Lấy path của các file image shirt
-shirtFolderPath = "Resource/Shirts"
-listShirts = os.listdir(shirtFolderPath)
+# Setup Fullscreen Window
+def setup_window():
+    cv2.namedWindow("Virtual Try-On", cv2.WND_PROP_FULLSCREEN)
+    cv2.setWindowProperty("Virtual Try-On", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
-# Các tỉ lệ kích thước giữa file ảnh so với áo trên video
-fixedRatio = 262 / 190  # widthOfShirt/widthOfPoint11to12
-shirtRatioHeightWidth = 581 / 440
+# Load Shirt Images
+def load_shirts(folder_path):
+    if not os.path.exists(folder_path) or not os.listdir(folder_path):
+        print("Error: Shirt folder is empty or does not exist!")
+        exit()
+    return [f for f in os.listdir(folder_path) if f.endswith((".png", ".jpg", ".jpeg"))]
 
-imageNumber = 0   # Index của shirt image hiện tại
+# Load Button Images
+def load_buttons():
+    try:
+        img_button_right = cv2.imread("Resource/button.png", cv2.IMREAD_UNCHANGED)
+        img_button_left = cv2.flip(img_button_right, 1)
+        return img_button_right, img_button_left
+    except:
+        print("Error: Button image not found!")
+        return None, None
 
-# Button image
-imgButtonRight = cv2.imread("Resource/button.png", cv2.IMREAD_UNCHANGED)
-imgButtonLeft = cv2.flip(imgButtonRight, 1)
+# Overlay Shirt Image
+def overlay_shirt(img, img_shirt, lm11, lm12, offsetX, offsetY, fixedRatio):
+    if img_shirt is None:
+        return img
 
-# Counter khi nhấn button left, right
-counterRight = 0
-counterLeft = 0
+    shoulderWidth = abs(lm11[0] - lm12[0])
+    shirtWidth = int(shoulderWidth * fixedRatio)
+    shirtHeight = int(shirtWidth * 1.3)
 
-# Tốc độ quyết định khi nhấn chọn bên trái, phải
-selectionSpeed = 10
+    if shirtWidth > 50 and shirtHeight > 50:  # Ensure valid size
+        img_shirt = cv2.resize(img_shirt, (shirtWidth, shirtHeight))
+        try:
+            img = cvzone.overlayPNG(img, img_shirt, (lm12[0] - offsetX, lm11[1] - offsetY))
+        except Exception as e:
+            print("Overlay error:", e)
+    return img
 
-while True:
-    success, img = cap.read()
-    # Vẽ các landmard pose lên image
+# Process Frame
+def process_frame(img, detector, listShirts, imageNumber, img_button_right, img_button_left, fixedRatio):
     img = detector.findPose(img)
     lmList, bboxInfo = detector.findPosition(img, bboxWithHands=False, draw=False)
-    if lmList:
-        # Vị trí các landmark để đặt shirt lên
-        lm11 = lmList[11][1:3]
-        lm12 = lmList[12][1:3]
-        # Load shirt image
-        imgShirt = cv2.imread(os.path.join(shirtFolderPath, listShirts[imageNumber]), cv2.IMREAD_UNCHANGED)
 
-        # Điều chỉnh lại kích thước shirt cho vừa khung hình
-        widthOfShirt = int((lm11[0] - lm12[0]) * fixedRatio)
-        if widthOfShirt > 0:
-            imgShirt = cv2.resize(imgShirt, (widthOfShirt, int(widthOfShirt * shirtRatioHeightWidth)))
-        else:
-            print("Invalid shirt width, skipping resize.")
+    if lmList and len(lmList) > 23:
+        lm11, lm12 = lmList[11][1:3], lmList[12][1:3]  # Shoulders
 
-        # imgShirt = cv2.resize(imgShirt, (widthOfShirt, int(widthOfShirt * shirtRatioHeightWidth)))
-        currentScale = (lm11[0] - lm12[0]) / 190
-        offset = int(44 * currentScale), int(48 * currentScale)
+        offsetX = int(abs(lm11[0] - lm12[0]) * 0.3)
+        offsetY = int(abs(lm11[1] - lm12[1]) * 0.5)  # Adjust vertical offset
 
-        # Draw shirt image
-        try:
-            img = cvzone.overlayPNG(img, imgShirt, (lm12[0] - offset[0], lm12[1] - offset[1]))
-        except:
-            pass
+        imgShirt = cv2.imread(os.path.join("Resource/Shirts", listShirts[imageNumber]), cv2.IMREAD_UNCHANGED)
+        img = overlay_shirt(img, imgShirt, lm11, lm12, offsetX, offsetY, fixedRatio)
 
-        # Draw 2 button image
-        img = cvzone.overlayPNG(img, imgButtonRight, (1074, 293))
-        img = cvzone.overlayPNG(img, imgButtonLeft, (72, 293))
+    # Overlay Buttons
+    if img_button_right is not None and img_button_left is not None:
+        img = cvzone.overlayPNG(img, img_button_right, (1220, 300))  # Right button
+        img = cvzone.overlayPNG(img, img_button_left, (50, 300))  # Left button
 
-        if lmList[16][1] < 300:
+    return img, lmList
+
+# Handle Shirt Switching
+def switch_shirt(lmList, imageNumber, listShirts, counterRight, counterLeft, selectionSpeed):
+    if len(lmList) > 16:  # Ensure hand landmarks are detected
+        right_hand = lmList[16][1:3]
+        left_hand = lmList[15][1:3]
+
+        if right_hand[1] < 150:  # Raise right hand to switch forward
             counterRight += 1
-            cv2.ellipse(img, (139, 360), (66, 66), 0, 0,
-                        counterRight * selectionSpeed, (0, 255, 0), 20)
-
-            if counterRight * selectionSpeed > 360:
+            if counterRight * selectionSpeed > 360 and imageNumber < len(listShirts) - 1:
                 counterRight = 0
-                if imageNumber < len(listShirts) - 1:
-                    imageNumber += 1
-        elif lmList[15][1] > 900:
+                imageNumber += 1
+        elif left_hand[1] < 150:  # Raise left hand to switch backward
             counterLeft += 1
-            cv2.ellipse(img, (1138, 360), (66, 66), 0, 0,
-                        counterLeft * selectionSpeed, (0, 255, 0), 20)
-            if counterLeft * selectionSpeed > 360:
+            if counterLeft * selectionSpeed > 360 and imageNumber > 0:
                 counterLeft = 0
-                if imageNumber > 0:
-                    imageNumber -= 1
-
+                imageNumber -= 1
         else:
-            counterRight = 0
-            counterLeft = 0
+            counterRight, counterLeft = 0, 0
+    return imageNumber, counterRight, counterLeft
 
-    cv2.imshow("Image", img)
-    cv2.waitKey(1)
+# Main Function
+def main():
+    global imageNumber, listShirts
+    cap, detector = initialize_camera()
+    setup_window()
+    listShirts = load_shirts("Resource/Shirts")
+    img_button_right, img_button_left = load_buttons()
+
+    fixedRatio, imageNumber = 1.2, 0
+    counterRight, counterLeft, selectionSpeed = 0, 0, 10
+
+    while True:
+        success, img = cap.read()
+        if not success:
+            break
+
+        img = cv2.flip(img, 1)  # Mirror the image for natural feel
+        img, lmList = process_frame(img, detector, listShirts, imageNumber, img_button_right, img_button_left, fixedRatio)
+
+        if lmList:
+            imageNumber, counterRight, counterLeft = switch_shirt(lmList, imageNumber, listShirts, counterRight, counterLeft, selectionSpeed)
+
+        cv2.imshow("Virtual Try-On", img)
+
+        if cv2.waitKey(1) == ord('q'):
+            break
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+if __name__ == "__main__":
+    main()
