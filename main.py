@@ -7,6 +7,9 @@ import os
 mp_pose = mp.solutions.pose
 mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
+pose = mp_pose.Pose(static_image_mode=False, min_detection_confidence=0.5, min_tracking_confidence=0.5)
+hands = mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_confidence=0.5, min_tracking_confidence=0.5)
+
 
 def overlay_image_alpha(background, overlay, x, y):
     background_width = background.shape[1]
@@ -107,9 +110,7 @@ def process_button_press(hands_results, imgButtonRight, imgButtonLeft, image, se
 
 def main():
     
-    pose = mp_pose.Pose(static_image_mode=False, min_detection_confidence=0.5, min_tracking_confidence=0.5)
-    hands = mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_confidence=0.5, min_tracking_confidence=0.5)
-
+    
     # Initialize video capture
     cap = cv2.VideoCapture(0)
 
