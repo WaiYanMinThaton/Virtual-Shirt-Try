@@ -10,6 +10,24 @@ mp_drawing = mp.solutions.drawing_utils
 pose = mp_pose.Pose(static_image_mode=False, min_detection_confidence=0.5, min_tracking_confidence=0.5)
 hands = mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_confidence=0.5, min_tracking_confidence=0.5)
 
+# button counter and selection speed
+counterRight = 0
+counterLeft = 0
+selectionSpeed = 5
+
+# Load button images
+imgButtonRight = cv2.imread('Resource/button.png', cv2.IMREAD_UNCHANGED)
+if imgButtonRight is None:
+    print("Error loading right button image. Please check the path.")
+    exit()
+imgButtonLeft = cv2.flip(imgButtonRight, 1)
+
+# Shirt sizing parameters
+fixedRatio = 262 / 190
+shirtRatioHeightWidth = 591 / 490
+imageNumber = 0
+
+
 
 def overlay_image_alpha(background, overlay, x, y):
     background_width = background.shape[1]
@@ -109,31 +127,17 @@ def process_button_press(hands_results, imgButtonRight, imgButtonLeft, image, se
     return image, counterRight, counterLeft, imageNumber
 
 def main():
-    
-    
+
+    global counterRight
+    global counterLeft
+    global imageNumber
+
     # Initialize video capture
     cap = cv2.VideoCapture(0)
 
     # Path to shirt images and load list of shirts
     shirtFolderPath = "Resource/Shirts"
     listShirts = load_shirt_images(shirtFolderPath)
-
-    # Shirt sizing parameters
-    fixedRatio = 262 / 190
-    shirtRatioHeightWidth = 591 / 490
-
-    imageNumber = 0
-
-    # Load button images
-    imgButtonRight = cv2.imread('Resource/button.png', cv2.IMREAD_UNCHANGED)
-    if imgButtonRight is None:
-        print("Error loading right button image. Please check the path.")
-        exit()
-    imgButtonLeft = cv2.flip(imgButtonRight, 1)
-
-    counterRight = 0
-    counterLeft = 0
-    selectionSpeed = 10
 
     while cap.isOpened():
         success, image = cap.read()
