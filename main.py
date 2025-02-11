@@ -2,6 +2,7 @@ import cv2
 import mediapipe as mp
 import numpy as np
 import os
+import sys
 
 # Initialize MediaPipe Pose and Hands
 mp_pose = mp.solutions.pose
@@ -192,4 +193,6 @@ def main():
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
+    shirt_type = sys.argv[1] if len(sys.argv) > 1 else "default"
+    print(f"Running main.py with shirt_type: {shirt_type}")
     main()

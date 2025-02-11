@@ -4,5 +4,24 @@
     </head>
     <body>
         <h1>Hello, world!</h1>
+        <button id='button'>Click me!</button>
     </body>
+    <script>
+        document.getElementById('button').addEventListener('click', function() {
+            tryOnFun();
+        });
+
+        async function tryOnFun() {
+            let response = await fetch('/api/try', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept' : 'application/json'
+                },
+                body: JSON.stringify({
+                    shirt_type: 'short'
+                })
+            });
+        }
+    </script>
 </html>
