@@ -140,6 +140,7 @@ def main():
     shirtFolderPath = "Resource/Shirts"
     listShirts = load_shirt_images(shirtFolderPath)
 
+
     while cap.isOpened():
         success, image = cap.read()
         if not success:
