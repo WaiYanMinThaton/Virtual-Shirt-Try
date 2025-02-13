@@ -33,6 +33,9 @@ imageNumber = 0
 conn = sqlite3.connect("database.db")
 cursor = conn.cursor()
 
+def overlay_text(image, text, position, font=cv2.FONT_HERSHEY_SIMPLEX, font_scale=0.5, color=(0, 0, 0), thickness=2):
+    cv2.putText(image, text, position, font, font_scale, color, thickness)
+
 def overlay_image_alpha(background, overlay, x, y):
     background_width = background.shape[1]
     background_height = background.shape[0]
@@ -192,6 +195,10 @@ def main():
         # Process button presses
         image, counterRight, counterLeft, imageNumber = process_button_press(
             hands_results, imgButtonRight, imgButtonLeft, image, selectionSpeed, counterRight, counterLeft, imageNumber, listShirts)
+        
+        # Display shirt information
+        shirt = listShirts[imageNumber]
+        overlay_text(image, f"{shirt.get('suggestion')}", (10, 30))
 
         # Display the image with the virtual try-on effect
         cv2.imshow('Virtual Try-On', image)
