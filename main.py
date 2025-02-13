@@ -3,6 +3,7 @@ import mediapipe as mp
 import numpy as np
 import os
 import sys
+import sqlite3
 
 # Initialize MediaPipe Pose and Hands
 mp_pose = mp.solutions.pose
@@ -28,7 +29,9 @@ fixedRatio = 262 / 190
 shirtRatioHeightWidth = 591 / 490
 imageNumber = 0
 
-
+# Database Setup
+conn = sqlite3.connect("database.db")
+cursor = conn.cursor()
 
 def overlay_image_alpha(background, overlay, x, y):
     background_width = background.shape[1]
@@ -68,12 +71,22 @@ def overlay_image_alpha(background, overlay, x, y):
 
     return background
 
-def load_shirt_images(shirt_folder_path):
-    # Load list of shirts from the folder
-    list_shirts = os.listdir(shirt_folder_path)
-    print("List of shirts:", list_shirts)
-    print(f"Number of shirts found: {len(list_shirts)}")
-    return list_shirts
+def transform_shirt(shirt):
+    keys = ["id", "path", "category", "color", "size", "price", "stock", "suggestion"]
+    dic = dict({})
+
+    for i in range(len(keys)):
+        dic[keys[i]] = shirt[i]
+
+    return dic
+
+def load_shirt_images(cursor):
+    cursor.execute("SELECT * FROM shirts")
+    shirts = cursor.fetchall()
+    
+    shirts = [ transform_shirt(shirt) for shirt in shirts ]
+  
+    return shirts
 
 def process_pose_landmarks(pose_results, image):
     if pose_results.pose_landmarks:
@@ -129,17 +142,14 @@ def process_button_press(hands_results, imgButtonRight, imgButtonLeft, image, se
 
 def main():
 
-    global counterRight
-    global counterLeft
-    global imageNumber
+    global counterRight,counterLeft,imageNumber,conn,cursor
 
     # Initialize video capture
     cap = cv2.VideoCapture(0)
 
     # Path to shirt images and load list of shirts
     shirtFolderPath = "Resource/Shirts"
-    listShirts = load_shirt_images(shirtFolderPath)
-
+    listShirts = load_shirt_images(cursor=cursor)
 
     while cap.isOpened():
         success, image = cap.read()
@@ -163,7 +173,7 @@ def main():
             shirt_width, shirt_height, shirt_top_left = calculate_shirt_dimensions(lm11_px, lm12_px, iw, ih, fixedRatio, shirtRatioHeightWidth)
 
             # Load and resize shirt image
-            imgShirtPath = os.path.join(shirtFolderPath, listShirts[imageNumber])
+            imgShirtPath = os.path.join(shirtFolderPath, listShirts[imageNumber].get("path"))
             imgShirt = cv2.imread(imgShirtPath, cv2.IMREAD_UNCHANGED)
             if imgShirt is not None:
                 imgShirt = cv2.resize(imgShirt, (shirt_width, shirt_height))
@@ -190,6 +200,7 @@ def main():
         if cv2.waitKey(5) & 0xFF == 27:
             break
 
+    conn.close()
     cap.release()
     cv2.destroyAllWindows()
 
