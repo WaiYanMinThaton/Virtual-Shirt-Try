@@ -8,16 +8,16 @@ cursor = conn.cursor()
 
 # Seeder Data
 shirts = [
-    ("s1.png",'t-shirt', "green", "S", 19.99, 10,'Recommend Skin Tone - Cool , Warn , Nature'),
-    ("s2.png",'t-shirt', "blue", "M", 29.99, 5, 'Recommend Skin Tone -  Nature'),
-    ("s3.png",'t-shirt', "red", "L", 39.99, 3,'Recommend Skin Tone - Warn , Nature'),
+    ('t-shirt',"s1.png", "green", "S", 19.99, 10,'Recommend Skin Tone - Cool , Warn , Nature'),
+    ('t-shirt',"s2.png" "blue", "M", 29.99, 5, 'Recommend Skin Tone -  Nature'),
+    ('t-shirt',"s3.png", "red", "L", 39.99, 3,'Recommend Skin Tone - Warn , Nature'),
 
-    ("S4.png",'PVTS', "pink", "S", 19.99, 10,'Recommend Skin Tone - Cool , Warn , Nature'),
-    ("S5.png",'PVTS', "white", "M", 29.99, 5, 'Recommend Skin Tone -  Nature'),
-    ("S6.png",'PVTS', "yellow", "L", 39.99, 3,'Recommend Skin Tone - Warn , Nature'),
+    ('PVTS',"S4.png","pink", "S", 19.99, 10,'Recommend Skin Tone - Cool , Warn , Nature'),
+    ('PVTS',"S5.png","white", "M", 29.99, 5, 'Recommend Skin Tone -  Nature'),
+    ('PVTS',"S6.png","yellow", "L", 39.99, 3,'Recommend Skin Tone - Warn , Nature'),
 
-    ("S7.png",'gray', "pink", "S", 19.99, 10,'Recommend Skin Tone - Cool , Warn , Nature'),
-    ("S8.png",'shirt', "plaid_pattern", "M", 29.99, 5, 'Recommend Skin Tone -  Nature'),
+    ('shirt',"S7.png","pink", "S", 19.99, 10,'Recommend Skin Tone - Cool , Warn , Nature'),
+    ('shirt',"S8.png","plaid_pattern", "M", 29.99, 5, 'Recommend Skin Tone -  Nature'),
 
 ]
 
