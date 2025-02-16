@@ -1,6 +1,7 @@
 from fastapi import FastAPI, UploadFile, File ,Request
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
+from fastapi.staticfiles import StaticFiles
 import subprocess
 import sqlite3
 
@@ -12,6 +13,7 @@ conn = sqlite3.connect("database.db")
 cursor = conn.cursor()
 
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="Resource"), name="static")
 
 @app.get("/")
 async def home():
