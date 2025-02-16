@@ -23,7 +23,7 @@ def create_table(cursor):
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS shirts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        category TEXT,
+        brand TEXT,
         path TEXT,
         color INTEGER,
         size TEXT,
@@ -40,7 +40,7 @@ def insert_shirt(cursor,shirts):
 
     for shirt in shirts:
         cursor.execute(f"""
-        INSERT INTO shirts (category,path, color, size, price, stock, suggestion)
+        INSERT INTO shirts (brand,path, color, size, price, stock, suggestion)
         VALUES {shirt}
         """)
     conn.commit()

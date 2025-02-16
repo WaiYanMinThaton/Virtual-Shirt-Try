@@ -10,6 +10,8 @@ app = FastAPI()
 async def home():
     return FileResponse("templates/home.html")
 
+@app.get('')
+
 
 @app.post("/api/try")
 async def try_upload(request: Request):
