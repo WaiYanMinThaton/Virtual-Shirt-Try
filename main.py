@@ -84,7 +84,7 @@ def transform_shirt(shirt):
     return dic
 
 def load_shirt_images(cursor):
-    cursor.execute("SELECT * FROM shirts")
+    cursor.execute(f"SELECT * FROM shirts WHERE brand = '{shirt_type}'")
     shirts = cursor.fetchall()
     
     shirts = [ transform_shirt(shirt) for shirt in shirts ]
@@ -213,5 +213,4 @@ def main():
 
 if __name__ == "__main__":
     shirt_type = sys.argv[1] if len(sys.argv) > 1 else "default"
-    print(f"Running main.py with shirt_type: {shirt_type}")
     main()
