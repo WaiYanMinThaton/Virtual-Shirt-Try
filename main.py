@@ -15,7 +15,7 @@ hands = mp_hands.Hands(static_image_mode=False, max_num_hands=2, min_detection_c
 # button counter and selection speed
 counterRight = 0
 counterLeft = 0
-selectionSpeed = 5
+selectionSpeed = 15
 
 # Load button images
 imgButtonRight = cv2.imread('Resource/button.png', cv2.IMREAD_UNCHANGED)
@@ -33,7 +33,7 @@ imageNumber = 0
 conn = sqlite3.connect("database.db")
 cursor = conn.cursor()
 
-def overlay_text(image, text, position, font=cv2.FONT_HERSHEY_SIMPLEX, font_scale=0.5, color=(0, 0, 0), thickness=2):
+def overlay_text(image, text, position, font=cv2.FONT_HERSHEY_SIMPLEX, font_scale=0.5, color=(255, 0, 0), thickness=2):
     cv2.putText(image, text, position, font, font_scale, color, thickness)
 
 def overlay_image_alpha(background, overlay, x, y):
@@ -75,7 +75,7 @@ def overlay_image_alpha(background, overlay, x, y):
     return background
 
 def transform_shirt(shirt):
-    keys = ["id", "path", "brand", "color", "size", "price", "stock", "suggestion"]
+    keys = ["id", "brand","path", "color", "size", "price", "stock", "suggestion"]
     dic = dict({})
 
     for i in range(len(keys)):
@@ -88,6 +88,8 @@ def load_shirt_images(cursor):
     query = f"SELECT * FROM shirts WHERE brand = '{shirt_type}'"
     cursor.execute(query)
     shirts = cursor.fetchall()
+ 
+    cv2.destroyAllWindows()
     shirts = [ transform_shirt(shirt) for shirt in shirts ]
   
     return shirts
