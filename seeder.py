@@ -12,12 +12,12 @@ shirts = [
     ("s2.png",'t-shirt', "blue", "M", 29.99, 5, 'Recommend Skin Tone -  Nature'),
     ("s3.png",'t-shirt', "red", "L", 39.99, 3,'Recommend Skin Tone - Warn , Nature'),
 
-    ("s4.png",'PVTS', "pink", "S", 19.99, 10,'Recommend Skin Tone - Cool , Warn , Nature'),
-    ("s5.png",'PVTS', "white", "M", 29.99, 5, 'Recommend Skin Tone -  Nature'),
-    ("s6.png",'PVTS', "yellow", "L", 39.99, 3,'Recommend Skin Tone - Warn , Nature'),
+    ("S4.png",'PVTS', "pink", "S", 19.99, 10,'Recommend Skin Tone - Cool , Warn , Nature'),
+    ("S5.png",'PVTS', "white", "M", 29.99, 5, 'Recommend Skin Tone -  Nature'),
+    ("S6.png",'PVTS', "yellow", "L", 39.99, 3,'Recommend Skin Tone - Warn , Nature'),
 
-    ("s7.png",'gray', "pink", "S", 19.99, 10,'Recommend Skin Tone - Cool , Warn , Nature'),
-    ("s8.png",'shirt', "plaid_pattern", "M", 29.99, 5, 'Recommend Skin Tone -  Nature'),
+    ("S7.png",'gray', "pink", "S", 19.99, 10,'Recommend Skin Tone - Cool , Warn , Nature'),
+    ("S8.png",'shirt', "plaid_pattern", "M", 29.99, 5, 'Recommend Skin Tone -  Nature'),
 
 ]
 
