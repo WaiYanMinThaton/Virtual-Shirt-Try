@@ -84,9 +84,10 @@ def transform_shirt(shirt):
     return dic
 
 def load_shirt_images(cursor):
-    cursor.execute(f"SELECT * FROM shirts WHERE brand = '{shirt_type}'")
-    shirts = cursor.fetchall()
     
+    query = f"SELECT * FROM shirts WHERE brand = '{shirt_type}'"
+    cursor.execute(query)
+    shirts = cursor.fetchall()
     shirts = [ transform_shirt(shirt) for shirt in shirts ]
   
     return shirts
