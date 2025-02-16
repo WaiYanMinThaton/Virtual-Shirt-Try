@@ -8,9 +8,17 @@ cursor = conn.cursor()
 
 # Seeder Data
 shirts = [
-    ("s1.png",'t-shirt', "red", "S", 19.99, 10,'Recommend Skin Tone - Cool , Warn , Nature'),
-    ("s2.png",'polo', "green", "M", 29.99, 5, 'Recommend Skin Tone -  Nature'),
-    ("s3.png",'shirt', "blue", "L", 39.99, 3,'Recommend Skin Tone - Warn , Nature'),
+    ("s1.png",'t-shirt', "green", "S", 19.99, 10,'Recommend Skin Tone - Cool , Warn , Nature'),
+    ("s2.png",'t-shirt', "blue", "M", 29.99, 5, 'Recommend Skin Tone -  Nature'),
+    ("s3.png",'t-shirt', "red", "L", 39.99, 3,'Recommend Skin Tone - Warn , Nature'),
+
+    ("s4.png",'PVTS', "pink", "S", 19.99, 10,'Recommend Skin Tone - Cool , Warn , Nature'),
+    ("s5.png",'PVTS', "white", "M", 29.99, 5, 'Recommend Skin Tone -  Nature'),
+    ("s6.png",'PVTS', "yellow", "L", 39.99, 3,'Recommend Skin Tone - Warn , Nature'),
+
+    ("s7.png",'gray', "pink", "S", 19.99, 10,'Recommend Skin Tone - Cool , Warn , Nature'),
+    ("s8.png",'shirt', "plaid_pattern", "M", 29.99, 5, 'Recommend Skin Tone -  Nature'),
+
 ]
 
 # Create shirts table
