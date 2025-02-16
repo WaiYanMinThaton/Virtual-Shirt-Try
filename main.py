@@ -75,7 +75,7 @@ def overlay_image_alpha(background, overlay, x, y):
     return background
 
 def transform_shirt(shirt):
-    keys = ["id", "path", "category", "color", "size", "price", "stock", "suggestion"]
+    keys = ["id", "path", "brand", "color", "size", "price", "stock", "suggestion"]
     dic = dict({})
 
     for i in range(len(keys)):

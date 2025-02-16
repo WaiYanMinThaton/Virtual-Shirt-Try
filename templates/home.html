@@ -141,6 +141,12 @@
 </div>
 
 <script>
+	
+	// Mounted Function
+	window.onload = function() {
+		fetchSimpleShirt();
+	}
+	
     document.getElementById('try_on_button').addEventListener('click', function() {
         tryOnFun();
     });
@@ -157,6 +163,19 @@
             })
         });
     }
+
+	async function fetchSimpleShirt() {
+		let response = await fetch('/api/simple-shirt', {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				'Accept' : 'application/json'
+			}
+		});
+		let data = await response.json();
+		console.log(data);
+	}
+
 </script>
 
 </body>
