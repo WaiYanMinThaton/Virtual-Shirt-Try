@@ -89,7 +89,6 @@ def load_shirt_images(cursor):
     cursor.execute(query)
     shirts = cursor.fetchall()
  
-    cv2.destroyAllWindows()
     shirts = [ transform_shirt(shirt) for shirt in shirts ]
   
     return shirts
